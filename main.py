@@ -1,0 +1,1 @@
+print("Academic Grade Tracker")
