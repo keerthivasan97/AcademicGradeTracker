@@ -1,19 +1,48 @@
 import tkinter as tk
 from tkinter import messagebox
+import storage
+import re
+#validate signup credentials
+def validate_signup(username, email, password):
+    if username == "":
+        messagebox.showinfo("Signup Failed", "Please enter a username.")
+        return False
+    elif email == "":
+        messagebox.showinfo("Signup Failed", "Please enter your email.")
+        return False
+    elif not re.match(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$', email):
+        messagebox.showinfo("Signup Failed", "Please enter a valid email address.")
+        return False
+    elif password == "":
+        messagebox.showinfo("Signup Failed", "Please enter a password.")
+        return False
+    elif not re.match(r'^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&]).{6,}$', password):
+        messagebox.showinfo("Signup Failed", "Password must be at least 6 characters long and include at least one uppercase letter, one number, and one special character.")
+        return False
+    else:
+        flag = storage.add_user(username, email, password)
+        if flag == False:
+            messagebox.showinfo("Signup Failed", "Username already exists.")
+        else:
+            messagebox.showinfo("Signup Successful", "You have successfully signed up!")
+            return True
 
+
+#event handler for login button
 def handle_submit(username, password):
-    if username == "" and password == "":
-        messagebox.showinfo("Login Failed", "Please enter both username and password.")
-    elif username == "":
+    if username == "":
         messagebox.showinfo("Login Failed", "Please enter your username.")
     elif password == "":
         messagebox.showinfo("Login Failed", "Please enter your password.")
     else:
-        messagebox.showerror("Login Failed", "Invalid username or password.")
-        messagebox.showinfo("login Failed","please signup to create an account")
+        flag = storage.login_user(username, password)
+        if flag == False:
+            messagebox.showinfo("Login Failed", "Invalid username or password.")
+        else:
+            messagebox.showinfo("Login Successful", "You have successfully logged in!")
 
 
-
+#event handler for signup button
 def handle_signup_page():
     signup_window = tk.Toplevel(root)
     signup_window.title("Signup")
@@ -37,7 +66,7 @@ def handle_signup_page():
     password_entry = tk.Entry(signup_window, show="*")
     password_entry.grid(row=3, column=1, padx=10, pady=5)
 
-    button_signup = tk.Button(signup_window, text="Signup", bg="lightblue", fg="darkblue")
+    button_signup = tk.Button(signup_window, text="Signup", bg="lightblue", fg="darkblue",command=lambda: validate_signup(username_entry.get(), email_entry.get(), password_entry.get()))
     button_signup.grid(row=4, column=0, columnspan=2, pady=10)
 
 root = tk.Tk()
