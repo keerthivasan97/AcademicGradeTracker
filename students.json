@@ -1,0 +1,20 @@
+{
+    "keerthivasan": {
+        "email": "kvasan580@gmail.com",
+        "password": "Keerthi@2006",
+        "semesters": {
+            "semester 2": {
+                "gpa": "8.62",
+                "credit": "20.5"
+            },
+            "semester 1": {
+                "gpa": "8.5",
+                "credit": "20.5"
+            },
+            "semester 3": {
+                "gpa": "9.8",
+                "credit": "25.5"
+            }
+        }
+    }
+}

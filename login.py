@@ -1,6 +1,7 @@
 import tkinter as tk
 from tkinter import messagebox
 import storage
+import dashboard
 import re
 
 
@@ -27,6 +28,7 @@ def validate_signup(username, email, password):
             messagebox.showinfo("Signup Failed", "Username already exists.")
         else:
             messagebox.showinfo("Signup Successful", "You have successfully signed up!")
+
             return True
 
 
@@ -42,7 +44,9 @@ def handle_submit(username, password):
             messagebox.showinfo("Login Failed", "Invalid username or password.")
         else:
             messagebox.showinfo("Login Successful", "You have successfully logged in!")
-
+            login_frame.destroy()
+            root.destroy()
+            dashboard.show_dashboard(username)
 
 #event handler for signup button and the signup page
 def handle_signup_page():
@@ -70,12 +74,14 @@ def handle_signup_page():
     #signup button
     button_signup = tk.Button(signup_window, text="Signup", bg="lightblue", fg="darkblue",command=lambda: validate_signup(username_entry.get(), email_entry.get(), password_entry.get()))
     button_signup.grid(row=4, column=0, columnspan=2, pady=10)
+    if(button_signup):
+        signup_window.destroy()
 
 # main login window and frame works
 root = tk.Tk()
 login_frame = tk.Frame(root)
 login_frame.place(relx=0.5, rely=0.5, anchor=tk.CENTER)
-root.geometry("600x400")
+root.geometry("800x600")
 
 title_label = tk.Label(login_frame, text="Welcome to the login page", font=("Arial", 30),bg="lightgreen", fg="lightyellow")
 title_label.grid(row=0,column=0,columnspan=2,padx=10,pady=20)
