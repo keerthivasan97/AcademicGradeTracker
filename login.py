@@ -45,8 +45,7 @@ def handle_submit(username, password):
         else:
             messagebox.showinfo("Login Successful", "You have successfully logged in!")
             login_frame.destroy()
-            root.destroy()
-            dashboard.show_dashboard(username)
+            dashboard.show_dashboard(root, username)
 
 #event handler for signup button and the signup page
 def handle_signup_page():
@@ -77,6 +76,9 @@ def handle_signup_page():
     if(button_signup):
         signup_window.destroy()
 
+
+
+
 # main login window and frame works
 root = tk.Tk()
 login_frame = tk.Frame(root)
@@ -103,4 +105,6 @@ button1.grid(row=3,column=0, padx=10, pady=5)
 
 button2 = tk.Button(login_frame,text="signup",command=handle_signup_page,bg="lightblue", fg="darkblue")
 button2.grid(row=3,column=1, padx=10, pady=5)
+
+
 root.mainloop()
