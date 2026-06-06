@@ -106,5 +106,4 @@ button1.grid(row=3,column=0, padx=10, pady=5)
 button2 = tk.Button(login_frame,text="signup",command=handle_signup_page,bg="lightblue", fg="darkblue")
 button2.grid(row=3,column=1, padx=10, pady=5)
 
-
 root.mainloop()

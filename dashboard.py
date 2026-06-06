@@ -1,4 +1,3 @@
-from logging import root
 import tkinter as tk
 from tkinter import messagebox
 import storage
@@ -31,15 +30,59 @@ def adds(sem,sgpa, credit, username):
     else:
         messagebox.showinfo("Skipped", "Semester data skipped due to invalid input.")
 
+def pre_sgpa(username):
+    pass
 
-def view_cgpa_data(username):
-    global view, add_sem
+def calculate_cgpa(username):
+    global Cgpa,view,add_sem
+
+    if Cgpa is None:
+        if add_sem is not None:
+            add_sem.pack_forget()
+            for widget in add_sem.winfo_children():
+                widget.destroy()
+            add_sem = None
+
+        if view is not None:
+            view.pack_forget()
+            for widget in view.winfo_children():
+                widget.destroy()
+            view = None
+        
+        Cgpa = tk.Frame(root)
+        sems = storage.get_user_data(username).get('semesters',{})
+        if sems == {}:
+            messagebox.showinfo("No Data", "No semester data found for the user.")
+        else:
+            tot_cre = 0
+            tot_s =0
+            cgpa = 0
+            for i,(sem,data) in enumerate(sems.items()):
+                tot_cre += float(data['credit'])
+                tot_s += float(data['credit'])*float(data['gpa'])
+            cgpa = float(tot_s/tot_cre)
+            label = tk.Label(Cgpa,text = f"CGPA: {cgpa}", font= ("Arial",20))
+            label.grid(row=0,column=0,padx=20,pady=20)
+            Cgpa.pack()
+    else:
+        Cgpa.pack()
+
+def view_semester_data(username):
+    global view,add_sem,Cgpa
     if view is None:
+
         if add_sem is not None:
             add_sem.pack_forget() # Hide the add_sem frame if it exists
             for widget in add_sem.winfo_children():
                 widget.destroy()
-                add_sem = None
+            add_sem = None
+
+        if Cgpa is not None:
+            Cgpa.pack_forget()
+            for widget in Cgpa.winfo_children():
+                widget.destroy()
+            Cgpa = None
+
         view = tk.Frame(root)
         sems = storage.get_user_data(username).get('semesters', {})
         if sems == {}:
@@ -51,24 +94,36 @@ def view_cgpa_data(username):
             label2.grid(row=0,column=1,pady=5)
             label3 = tk.Label(view,text="Credit Hours",font=("Arial", 10, "bold"))
             label3.grid(row=0,column=2,pady=5)
+            cgpa =0
+            tot_credits=0
+            
             for i, (sem, data) in enumerate(sems.items()):
                 tk.Label(view, text=sem).grid(row=i+1, column=0, pady=5)
                 tk.Label(view, text=data['gpa']).grid(row=i+1, column=1, pady=5)
                 tk.Label(view, text=data['credit']).grid(row=i+1, column=2, pady=5)
+                
             view.pack()
     else:
         view.pack() # Show the view frame if it already exists
 
 
 def add_semester_data(username):
-    global add_sem, view
+    global add_sem, view,Cgpa
 
     if add_sem is None:
+
         if view is not None:
             view.pack_forget() # Hide the view frame if it exists
             for widget in view.winfo_children():
                 widget.destroy() # Clear the view frame content
-                view = None
+            view = None
+
+        if Cgpa is not None:
+            Cgpa.pack_forget()
+            for widget in Cgpa.winfo_children():
+                widget.destroy()
+            Cgpa = None
+
         add_sem = tk.Frame(root)
         label = tk.Label(add_sem, text="Kindly enter your semester-wise GPA and credit hours.If the semester is not completed then leave the fields empty.", font=("Arial", 9))
         label.grid(pady=10)
@@ -93,6 +148,7 @@ def add_semester_data(username):
     else:
         add_sem.pack() # Show the add_sem frame if it already exists
 
+
 def show_dashboard(main_root,username):
     global root
     root = main_root
@@ -101,17 +157,25 @@ def show_dashboard(main_root,username):
 
     dash_frame = tk.Frame(root) # frame for dashboard content
 
-    label = tk.Label(dash_frame, text=f"Welcome to the Dashboard, {username}!", font=("Arial", 20), bg="lightblue", fg="darkblue")
-    label.grid(pady=20)
+    label = tk.Label(dash_frame, text=f"Welcome to the Dashboard, {username}!",activebackground="lightblue", font=("Arial", 20), fg="darkblue")
+    label.grid(row=0,column=0,columnspan = 4,padx=20, pady=20)
 
-    add_semester = tk.Button(dash_frame, text="Add Semester Data", bg="lightblue", fg="darkblue", command=lambda: add_semester_data(username))
-    add_semester.grid(row=1, column=0, padx=10, pady=10)
+    add_semester = tk.Button(dash_frame, text="Add Semester Data", activebackground="lightblue", fg="darkblue", command=lambda: add_semester_data(username))
+    add_semester.grid(row=1, column=0,padx=10,pady=10)
 
-    view_cgpa = tk.Button(dash_frame, text="View CGPA", bg="lightblue", fg="darkblue", command=lambda: view_cgpa_data(username))
-    view_cgpa.grid(row=1, column=1, padx=10, pady=10)
+    view_sems = tk.Button(dash_frame, text="View Semester Data", activebackground="lightblue", fg="darkblue", command=lambda: view_semester_data(username))
+    view_sems.grid(row=1, column=1,padx=10,pady=10)
+
+    calcul_cgpa = tk.Button(dash_frame, text="Calculate CGPA", activebackground="lightblue", fg="darkblue", command=lambda: calculate_cgpa(username))
+    calcul_cgpa.grid(row=1, column=2,padx=10,pady=10)
+
+    predict_sgpa = tk.Button(dash_frame,text="Predict SGPA",activebackground = "Lightblue",fg="darkblue",command=lambda: pre_sgpa(username))
+    predict_sgpa.grid(row=1,column=3,padx=10,pady=10)
     dash_frame.pack()
 
 #global var 
 root = None
 add_sem = None
 view = None
+Grade = None
+Cgpa = None

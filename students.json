@@ -1,17 +1,21 @@
 {
-    "kiruthi": {
-        "email": "k09@gmail.com",
-        "password": "Misu@123",
+    "hiru": {
+        "email": "h09@gmail.com",
+        "password": "hURU@123",
         "semesters": {
-            "semester 2": {
+            "semester 1": {
                 "gpa": "8.62",
                 "credit": "20.5"
             },
-            "semester 1": {
+            "semester 2": {
                 "gpa": "8.5",
                 "credit": "20.5"
             },
             "semester 3": {
+                "gpa": "9",
+                "credit": "25.5"
+            },
+            "semester 4": {
                 "gpa": "8.6",
                 "credit": "30"
             }
