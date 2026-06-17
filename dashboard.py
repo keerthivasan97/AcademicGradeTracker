@@ -31,6 +31,7 @@ def adds(sem,sgpa, credit, username):
         messagebox.showinfo("Skipped", "Semester data skipped due to invalid input.")
 
 def pre_sgpa(username):
+    
     pass
 
 def calculate_cgpa(username):
@@ -172,7 +173,7 @@ def show_dashboard(main_root,username):
     predict_sgpa = tk.Button(dash_frame,text="Predict SGPA",activebackground = "Lightblue",fg="darkblue",command=lambda: pre_sgpa(username))
     predict_sgpa.grid(row=1,column=3,padx=10,pady=10)
     dash_frame.pack()
-
+    
 #global var 
 root = None
 add_sem = None
