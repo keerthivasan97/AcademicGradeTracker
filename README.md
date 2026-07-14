@@ -66,7 +66,7 @@ python login.py
 
 ### Dashboard
 
-![Dashboard](screenshots/maindash.png)
+![Dashboard](screenshots/mainDash.png)
 
 ### ADD SGPA
 
