@@ -1,109 +1,165 @@
 import tkinter as tk
-from tkinter import messagebox
+from tkinter import ttk, messagebox
 import storage
 import dashboard
 import re
-
-
-#validate signup credentials
 def validate_signup(username, email, password):
     if username == "":
         messagebox.showinfo("Signup Failed", "Please enter a username.")
         return False
+
     elif email == "":
         messagebox.showinfo("Signup Failed", "Please enter your email.")
         return False
+
     elif not re.match(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$', email):
         messagebox.showinfo("Signup Failed", "Please enter a valid email address.")
         return False
+
     elif password == "":
         messagebox.showinfo("Signup Failed", "Please enter a password.")
         return False
+
     elif not re.match(r'^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&]).{6,}$', password):
-        messagebox.showinfo("Signup Failed", "Password must be at least 6 characters long and include at least one uppercase letter, one number, and one special character.")
+        messagebox.showinfo(
+            "Signup Failed",
+            "Password must contain:\n"
+            "- At least 6 characters\n"
+            "- One uppercase letter\n"
+            "- One number\n"
+            "- One special character"
+        )
         return False
+
     else:
-        flag = storage.add_user(username, email, password)
-        if flag == False:
-            messagebox.showinfo("Signup Failed", "Username already exists.")
-        else:
-            messagebox.showinfo("Signup Successful", "You have successfully signed up!")
-
+        if storage.add_user(username, email, password):
+            messagebox.showinfo("Signup Successful", "Account created successfully!")
             return True
+        else:
+            messagebox.showinfo("Signup Failed", "Username already exists.")
+            return False
 
-
-#event handler for login button
 def handle_submit(username, password):
     if username == "":
         messagebox.showinfo("Login Failed", "Please enter your username.")
+
     elif password == "":
         messagebox.showinfo("Login Failed", "Please enter your password.")
+
     else:
-        flag = storage.login_user(username, password)
-        if flag == False:
-            messagebox.showinfo("Login Failed", "Invalid username or password.")
-        else:
-            messagebox.showinfo("Login Successful", "You have successfully logged in!")
+        if storage.login_user(username, password):
+            messagebox.showinfo("Login Successful", "Welcome!")
             login_frame.destroy()
             dashboard.show_dashboard(root, username)
+        else:
+            messagebox.showinfo("Login Failed", "Invalid username or password.")
 
-#event handler for signup button and the signup page
 def handle_signup_page():
     signup_window = tk.Toplevel(root)
     signup_window.title("Signup")
-    signup_window.geometry("400x300")
+    signup_window.geometry("420x330")
+    signup_window.resizable(False, False)
 
-    label = tk.Label(signup_window, text="Signup Page", font=("Arial", 20), bg="lightblue", fg="darkblue")
-    label.grid(row=0, column=0, columnspan=2, pady=20)
-    #username label and entry
-    username_label = tk.Label(signup_window, text="Username:")
-    username_label.grid(row=1, column=0, padx=10, pady=5, sticky=tk.W)
-    username_entry = tk.Entry(signup_window)
-    username_entry.grid(row=1, column=1, padx=10, pady=5)
-    #email label and entry
-    email_label = tk.Label(signup_window, text="Email:")
-    email_label.grid(row=2, column=0, padx=10, pady=5, sticky=tk.W)
-    email_entry = tk.Entry(signup_window)
-    email_entry.grid(row=2, column=1, padx=10, pady=5)
-    #password label and entry
-    password_label = tk.Label(signup_window, text="Password:")
-    password_label.grid(row=3, column=0, padx=10, pady=5, sticky=tk.W)
-    password_entry = tk.Entry(signup_window, show="*")
-    password_entry.grid(row=3, column=1, padx=10, pady=5)
-    #signup button
-    button_signup = tk.Button(signup_window, text="Signup", bg="lightblue", fg="darkblue",command=lambda: validate_signup(username_entry.get(), email_entry.get(), password_entry.get()))
-    button_signup.grid(row=4, column=0, columnspan=2, pady=10)
-    if(button_signup):
-        signup_window.destroy()
+    frame = ttk.Frame(signup_window, padding=20)
+    frame.pack(expand=True)
 
+    ttk.Label(
+        frame,
+        text="Create Account",
+        style="Heading.TLabel"
+    ).grid(row=0, column=0, columnspan=2, pady=20)
 
+    ttk.Label(frame, text="Username").grid(row=1, column=0, sticky="w", pady=8)
+    username_entry = ttk.Entry(frame, width=30)
+    username_entry.grid(row=1, column=1)
 
+    ttk.Label(frame, text="Email").grid(row=2, column=0, sticky="w", pady=8)
+    email_entry = ttk.Entry(frame, width=30)
+    email_entry.grid(row=2, column=1)
 
-# main login window and frame works
+    ttk.Label(frame, text="Password").grid(row=3, column=0, sticky="w", pady=8)
+    password_entry = ttk.Entry(frame, width=30, show="*")
+    password_entry.grid(row=3, column=1)
+
+    def signup():
+        if validate_signup(
+                username_entry.get(),
+                email_entry.get(),
+                password_entry.get()):
+            signup_window.destroy()
+
+    ttk.Button(
+        frame,
+        text="Signup",
+        command=signup
+    ).grid(row=4, column=0, columnspan=2, pady=20)
+
 root = tk.Tk()
-login_frame = tk.Frame(root)
-login_frame.place(relx=0.5, rely=0.5, anchor=tk.CENTER)
-root.geometry("800x600")
+root.title("Student CGPA Manager")
+root.geometry("900x600")
+root.resizable(False, False)
 
-title_label = tk.Label(login_frame, text="Welcome to the login page", font=("Arial", 30),bg="lightgreen", fg="lightyellow")
-title_label.grid(row=0,column=0,columnspan=2,padx=10,pady=20)
+# ttk Theme
+style = ttk.Style()
+style.theme_use("clam")
 
-username_label = tk.Label(login_frame, text="Username:")
-username_label.grid(row=1, column=0, padx=10, pady=5, sticky=tk.W)
-username_entry = tk.Entry(login_frame)
-username_entry.grid(row=1, column=1, padx=10, pady=5)
+style.configure(
+    "Heading.TLabel",
+    font=("Segoe UI", 22, "bold")
+)
 
+style.configure(
+    "TButton",
+    font=("Segoe UI", 10)
+)
 
-password_label = tk.Label(login_frame, text="Password:")
-password_label.grid(row=2, column=0, padx=10, pady=5, sticky=tk.W)
-password_entry = tk.Entry(login_frame, show="*")
-password_entry.grid(row=2, column=1, padx=10, pady=5)
+style.configure(
+    "TLabel",
+    font=("Segoe UI", 11)
+)
 
-button1 = tk.Button(login_frame,text="login",bg="lightblue", fg="darkblue",command=lambda: handle_submit(username_entry.get(), password_entry.get()))
-button1.grid(row=3,column=0, padx=10, pady=5)
+login_frame = ttk.Frame(root, padding=30)
+login_frame.place(relx=0.5, rely=0.5, anchor="center")
 
+ttk.Label(
+    login_frame,
+    text="Student CGPA Manager",
+    style="Heading.TLabel"
+).grid(row=0, column=0, columnspan=2, pady=(0, 30))
 
-button2 = tk.Button(login_frame,text="signup",command=handle_signup_page,bg="lightblue", fg="darkblue")
-button2.grid(row=3,column=1, padx=10, pady=5)
+ttk.Label(login_frame, text="Username").grid(
+    row=1,
+    column=0,
+    sticky="w",
+    pady=10
+)
+
+username_entry = ttk.Entry(login_frame, width=30)
+username_entry.grid(row=1, column=1, padx=10)
+
+ttk.Label(login_frame, text="Password").grid(
+    row=2,
+    column=0,
+    sticky="w",
+    pady=10
+)
+
+password_entry = ttk.Entry(login_frame, width=30, show="*")
+password_entry.grid(row=2, column=1, padx=10)
+
+ttk.Button(
+    login_frame,
+    text="Login",
+    command=lambda: handle_submit(
+        username_entry.get(),
+        password_entry.get()
+    )
+).grid(row=3, column=0, pady=25)
+
+ttk.Button(
+    login_frame,
+    text="Signup",
+    command=handle_signup_page
+).grid(row=3, column=1)
 
 root.mainloop()
